@@ -1,0 +1,392 @@
+<!-- 
+
+<!-- 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crypto Alert</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+<body>
+    <h1>Current Bitcoin Price: <span id="btc-price">Loading...</span></h1>
+    <form id="alert-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="target_price">Target Price:</label>
+        <input type="number" id="target_price" name="target_price" step="0.01" required>
+        <button type="submit">Set Alert</button>
+    </form>
+    <canvas id="priceChart" width="400" height="200"></canvas>
+
+    <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const priceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],  // Time labels will be added here
+                datasets: [{
+                    label: 'Bitcoin Price',
+                    data: [],  // Price data will be added here
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Price (USD)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const ws = new WebSocket('wss://fstream.binance.com/stream?streams=btcusdt@markPrice');
+        ws.onopen = function() {
+            console.log('WebSocket connection opened');
+        };
+
+        ws.onmessage = function(event) {
+            console.log('WebSocket message received:', event.data);
+            const data = JSON.parse(event.data);
+
+            if (data && data.data && data.data.p) {
+                const price = parseFloat(data.data.p);
+                const time = new Date();
+
+                document.getElementById('btc-price').innerText = price.toFixed(2);
+
+                // Add new data to the chart
+                priceChart.data.labels.push(time);
+                priceChart.data.datasets[0].data.push(price);
+                priceChart.update();
+            } else {
+                console.error('Unexpected data format:', data);
+            }
+        };
+
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+
+        document.getElementById('alert-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const target_price = document.getElementById('target_price').value;
+
+            fetch('/create_alert/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ email, target_price })
+            }).then(response => response.json())
+              .then(data => alert('Alert created!'))
+              .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crypto Alert</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1, form, canvas {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        label, input, button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Current Bitcoin Price: <span id="btc-price">Loading...</span></h1>
+    <form id="alert-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="target_price">Target Price:</label>
+        <input type="number" id="target_price" name="target_price" step="0.01" required>
+        <button type="submit">Set Alert</button>
+    </form>
+    <canvas id="priceChart" width="400" height="200"></canvas>
+
+    <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const priceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],  // Time labels will be added here
+                datasets: [{
+                    label: 'Bitcoin Price',
+                    data: [],  // Price data will be added here
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 3,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Price (USD)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const ws = new WebSocket('wss://fstream.binance.com/stream?streams=btcusdt@markPrice');
+        ws.onopen = function() {
+            console.log('WebSocket connection opened');
+        };
+
+        ws.onmessage = function(event) {
+            console.log('WebSocket message received:', event.data);
+            const data = JSON.parse(event.data);
+
+            if (data && data.data && data.data.p) {
+                const price = parseFloat(data.data.p);
+                const time = new Date();
+
+                document.getElementById('btc-price').innerText = price.toFixed(2);
+
+                // Add new data to the chart
+                priceChart.data.labels.push(time);
+                priceChart.data.datasets[0].data.push(price);
+                priceChart.update();
+            } else {
+                console.error('Unexpected data format:', data);
+            }
+        };
+
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+
+        document.getElementById('alert-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const target_price = document.getElementById('target_price').value;
+
+            fetch('/create_alert/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ email, target_price })
+            }).then(response => response.json())
+              .then(data => alert('Alert created!'))
+              .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html> --> 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crypto Alert</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px; /* Add some padding to prevent cutting off */
+        }
+        h1 {
+            display: block; /* Ensure it takes up space */
+            text-align: center;
+            margin: 20px 0; /* Add some margin for spacing */
+            font-size: 2.5em; /* Keep font size larger */
+            border: 2px solid white; /* Add a border */
+            padding: 10px; /* Add padding inside the border */
+            border-radius: 5px; /* Rounded corners for aesthetics */
+            width: 100%; /* Full width to prevent cutting off */
+            max-width: 600px; /* Maximum width for larger screens */
+        }
+        form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        label, input, button {
+            margin: 5px;
+        }
+        canvas {
+            margin-top: 10px; /* Ensure there's space above the chart */
+            width: 300px; /* Reduce width */
+            height: 120px; /* Reduce height for the graph */
+        }
+    </style>
+</head>
+<body>
+    <h1>Current Bitcoin Price: <span id="btc-price">Loading...</span></h1>
+    <form id="alert-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="target_price">Target Price:</label>
+        <input type="number" id="target_price" name="target_price" step="0.01" required>
+        <button type="submit">Set Alert</button>
+    </form>
+    <canvas id="priceChart"></canvas>
+
+    <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const priceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],  // Time labels will be added here
+                datasets: [{
+                    label: 'Bitcoin Price',
+                    data: [],  // Price data will be added here
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 3,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Price (USD)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const ws = new WebSocket('wss://fstream.binance.com/stream?streams=btcusdt@markPrice');
+        ws.onopen = function() {
+            console.log('WebSocket connection opened');
+        };
+
+        ws.onmessage = function(event) {
+            console.log('WebSocket message received:', event.data);
+            const data = JSON.parse(event.data);
+
+            if (data && data.data && data.data.p) {
+                const price = parseFloat(data.data.p);
+                const time = new Date();
+
+                document.getElementById('btc-price').innerText = price.toFixed(2);
+
+                // Add new data to the chart
+                priceChart.data.labels.push(time);
+                priceChart.data.datasets[0].data.push(price);
+                priceChart.update();
+            } else {
+                console.error('Unexpected data format:', data);
+            }
+        };
+
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+
+        document.getElementById('alert-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const target_price = document.getElementById('target_price').value;
+
+            fetch('/create_alert/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ email, target_price })
+            }).then(response => response.json())
+              .then(data => alert('Alert created!'))
+              .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

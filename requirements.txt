@@ -1,0 +1,12 @@
+Django==4.1.7
+djangorestframework==3.13.1
+channels==4.0.0
+channels-redis==4.0.0
+asgiref==3.5.2
+daphne==4.0.0
+requests==2.28.2
+pytz==2022.5
+sqlparse==0.4.4
+psycopg2-binary==2.9.3  # if you're using PostgreSQL
+pillow==9.3.0  # if you need image processing
+chartjs-adapter-date-fns==3.0.0  # Adapter for Chart.js to handle date and time
