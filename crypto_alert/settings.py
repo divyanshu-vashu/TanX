@@ -130,7 +130,7 @@ EMAIL_HOST = 'smtp-relay.brevo.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '796e07001@smtp-brevo.com'
-EMAIL_HOST_PASSWORD = '7n8yD5MAGBUd3a0I'
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'vdkalife@gmail.com'
 
 
